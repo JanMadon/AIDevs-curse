@@ -5,7 +5,7 @@ if ($argv[1] == 'getTask') {
     $url = "https://tasks.aidevs.pl/token/helloapi";
 
     $jsonData = json_encode([
-        "apikey" => "af693b93-4488-4f7a-811e-c0910ac17ba4"
+        "apikey" => $conf['apikey']
     ]);
 
     $curl = curl_init();

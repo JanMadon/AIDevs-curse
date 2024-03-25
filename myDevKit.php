@@ -1,32 +1,43 @@
 <?php
+$config = require_once('conf.php');
+
+require_once 'taskBloger.php';
+
 if(!isset($argv[1])){
     exit("'getTask' or 'answer'");
 }
 
 
 if ($argv[1] == 'getTask') {
-
-    $token = getToken('moderation')->token;
+// zadania api: moderation,blogger
+    $token = getToken('liar', $config)->token;
     $task = getTask($token);
     print_r($task);
     print_r($token);
 
 } elseif ($argv[1] == 'answer') {
-    $token = "4f847e473c1630eacd9335ededec3a195157438a";
+    $token = "06b7ca6b23612dc5974bfca66a0a770741b4a2db";
+    $system = 'jesteś pomocnikiem blogera który piszę na temat przyrządzania pizzy Margherity, bloger poda ci nazwę rozdziału a ty mu ten rozdził napiszesz';
 
-    $answer = [0, 1, 0, 1];
+    $answer = [
+        message($system, "Wstęp: kilka słów na temat historii pizzy", $config),
+        message($system, "Niezbędne składniki na pizzę", $config),
+        message($system, "Robienie pizzy", $config),
+        message($system, "Pieczenie pizzy w piekarniku", $config),
+    ];
 
     $response = answer($token, $answer);
    var_dump($response);
 }
 
 
-function getToken($task)
+function getToken($task , $config)
 {
+
     $url = "https://tasks.aidevs.pl/token/$task";
 
     $jsonData = json_encode([
-        "apikey" => "af693b93-4488-4f7a-811e-c0910ac17ba4"
+        "apikey" => $config['apikey-aidevs']
     ]);
 
     $curl = curl_init();
@@ -62,7 +73,7 @@ function answer($token, $answer)
         "answer" => $answer
     ]);
     print_r($answer);
-    exit();
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
