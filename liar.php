@@ -1,7 +1,21 @@
 <?php
 $config = require_once('conf.php');
 
-require_once 'taskBloger.php';
+//$data = [
+//    'question' => 'What is capitol of poland?',
+//];
+//
+//$url = "https://tasks.aidevs.pl/task/9cc3073ec48f1f6768fda656cfd40c1d0ea5a842";
+//$curl = curl_init();
+//curl_setopt($curl, CURLOPT_URL, $url);
+//curl_setopt($curl, CURLOPT_POST, true);
+//curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+//curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+//$response = curl_exec($curl);
+////$response = json_decode($response, true); // true dodaje tablice
+//print_r($response);
+//
+//exit();
 
 if(!isset($argv[1])){
     exit("'getTask' or 'answer'");
@@ -16,18 +30,10 @@ if ($argv[1] == 'getTask') {
     print_r($token);
 
 } elseif ($argv[1] == 'answer') {
-    $token = "06b7ca6b23612dc5974bfca66a0a770741b4a2db";
-    $system = 'jesteś pomocnikiem blogera który piszę na temat przyrządzania pizzy Margherity, bloger poda ci nazwę rozdziału a ty mu ten rozdził napiszesz';
 
-    $answer = [
-        message($system, "Wstęp: kilka słów na temat historii pizzy", $config),
-        message($system, "Niezbędne składniki na pizzę", $config),
-        message($system, "Robienie pizzy", $config),
-        message($system, "Pieczenie pizzy w piekarniku", $config),
-    ];
 
-    $response = answer($token, $answer);
-   var_dump($response);
+    $response = answer('9cc3073ec48f1f6768fda656cfd40c1d0ea5a842', "YES");
+  // var_dump($response);
 }
 
 
@@ -79,10 +85,11 @@ function answer($token, $answer)
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
-//    curl_setopt($curl, CURLOPT_HTTPHEADER, [
-//        'Content-Type: application/json',
-//        'Content-Length: ' . strlen($jsonData)
-//    ]);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Content-Length: ' . strlen($jsonData)
+    ]);
 
     return json_decode(curl_exec($curl), true);
 }
+
