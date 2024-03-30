@@ -18,8 +18,6 @@ class Task
 
         $token = $this->getToken($taskName)->token;
         $task = $this->getTask($token);
-        print_r($task);
-        print_r($token);
 
         return [
             'task' => $task,
