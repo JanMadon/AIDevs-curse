@@ -1,8 +1,10 @@
 <?php
 
-require_once 'Task.php';
-require_once 'GPTpromptADA.php';
-require_once 'Answer.php';
+namespace app\Tasks;
+
+
+use app\Answer\Answer;
+use app\Prompts\GPTpromptADA;
 
 class Embedding
 {

@@ -1,8 +1,11 @@
 <?php
 
-require_once 'Task.php';
-require_once 'GPTprompt.php';
-require_once 'Answer.php';
+namespace app\Tasks;
+
+use app\Tasks;
+use app\Prompts\GPTprompt;
+use app\Answer\Answer;
+
 
 class Inpromt
 {
@@ -23,19 +26,19 @@ class Inpromt
 
         // zapytaj chat o imie
         $prompt = new GPTprompt($this->conf);
-        $name = $prompt->message('zwróć tylko imię jakie wystąpi w zdaniu',$response['task']['question']);
+        $name = $prompt->message('zwróć tylko imię jakie wystąpi w zdaniu', $response['task']['question']);
         var_dump($response);
 
         // przeszukaj tablice wyników
         $sentences = [];
-        foreach($response['task']['input'] as $sentence) {
-            if(str_contains($sentence, $name)){
+        foreach ($response['task']['input'] as $sentence) {
+            if (str_contains($sentence, $name)) {
                 $sentences[] = $sentence;
             }
         }
 
         // poproś chat o odpowiedz na pytanie
-        $answer = $prompt->message($sentences[0],$response['task']['question']);
+        $answer = $prompt->message($sentences[0], $response['task']['question']);
 
         // answer
         $res = Answer::answer($response['token'], $answer);

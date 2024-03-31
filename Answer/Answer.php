@@ -1,5 +1,6 @@
 <?php
 
+namespace app\Answer;
 class Answer
 {
 

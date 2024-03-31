@@ -1,8 +1,9 @@
 <?php
 
-require_once 'Task.php';
-require_once 'GPTpromptSpeech.php';
-require_once 'Answer.php';
+namespace app\Tasks;
+
+use app\Answer\Answer;
+use app\Prompts\GPTpromptSpeech;
 
 class Whisper
 {
@@ -24,7 +25,7 @@ class Whisper
 
 
         //$fileUrl = substr($response['task']['msg'], strpos($response['task']['msg'], 'https'));
-            // w ten sposób nie dziła pobieranie - pobrałem plik ręcznie.
+        // w ten sposób nie dziła pobieranie - pobrałem plik ręcznie.
         //$record = file_put_contents('mateusz.mp3', $fileUrl);
 
         // zapytaj chat o imie

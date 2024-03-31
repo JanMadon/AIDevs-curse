@@ -1,6 +1,8 @@
 <?php
 
-class GPTpromptADA
+namespace app\Prompts;
+
+class GPTpromptSpeech
 {
     private array $conf;
 
@@ -13,33 +15,35 @@ class GPTpromptADA
     }
 
 
-    function message($input)
+    function message($filePath)
     {
-
+        $model = 'whisper-1';
         $payload = [
-            'model' => 'text-embedding-ada-002',
-            'encoding_format' => 'float',
-            'input' => $input
+            'model' => $model,
+        ];
+
+        $postFields = [
+            'file' => new CURLFile($filePath),
+            'model' => $model,
+            'response_format' => 'text'
         ];
 
         $payload = json_encode($payload);
-        $curl = curl_init('https://api.openai.com/v1/embeddings');
+        $curl = curl_init('https://api.openai.com/v1/audio/transcriptions');
         curl_setopt($curl, CURLOPT_POST, true); // podobnu usi być true bo inaczej bedzie GET
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $postFields);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($payload),
+            'Content-Type: multipart/form-data',
             'Authorization: Bearer ' . $this->conf['openAi-key']
         ]);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         $response = curl_exec($curl);
         echo curl_error($curl) ? 'Curl error: ' . curl_error($curl) : '';
         curl_close($curl);
 
-        $response = json_decode($response)->data[0]->embedding;
-        var_dump($response);
-        return (array) $response;
+        return $response;
     }
+
 
 }

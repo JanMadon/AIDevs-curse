@@ -1,5 +1,5 @@
 <?php
-$conf = require_once ('conf.php');
+$conf = require_once('conf.php');
 
 if ($argv[1] == 'getTask') {
     $url = "https://tasks.aidevs.pl/token/helloapi";

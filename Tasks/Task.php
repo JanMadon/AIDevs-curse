@@ -1,6 +1,6 @@
 <?php
 
-
+namespace app\Tasks;
 class Task
 {
     private array $conf;

@@ -1,6 +1,7 @@
 <?php
 
-class GPTprompt
+namespace app\Prompts;
+class GPTpromptADA
 {
     private array $conf;
 
@@ -13,25 +14,17 @@ class GPTprompt
     }
 
 
-    function message($system, $user)
+    function message($input)
     {
-        $model = 'gpt-3.5-turbo';
+
         $payload = [
-            'model' => $model,
-            'messages' => [
-                [
-                    'role' => 'system',
-                    'content' => $system
-                ],
-                [
-                    'role' => 'user',
-                    'content' => $user
-                ]
-            ]
+            'model' => 'text-embedding-ada-002',
+            'encoding_format' => 'float',
+            'input' => $input
         ];
 
         $payload = json_encode($payload);
-        $curl = curl_init('https://api.openai.com/v1/chat/completions');
+        $curl = curl_init('https://api.openai.com/v1/embeddings');
         curl_setopt($curl, CURLOPT_POST, true); // podobnu usi być true bo inaczej bedzie GET
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
@@ -45,10 +38,9 @@ class GPTprompt
         echo curl_error($curl) ? 'Curl error: ' . curl_error($curl) : '';
         curl_close($curl);
 
-        $response = json_decode($response)->choices;
-        $response = (string) $response[0]->message->content;
+        $response = json_decode($response)->data[0]->embedding;
         var_dump($response);
-        return $response;
+        return (array)$response;
     }
 
 }
