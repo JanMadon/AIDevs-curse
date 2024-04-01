@@ -3,6 +3,7 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use app\Tasks\Functions;
+use app\Tasks\Rodo;
 
 $config = require_once('conf.php');
 //require_once 'Task.php';
@@ -20,5 +21,8 @@ $config = require_once('conf.php');
 //$whisper = new Whisper($config);
 //$whisper->run();
 
-$functions = new Functions($config);
-$functions->run();
+//$functions = new Functions($config);
+//$functions->run();
+
+$rodo = new Rodo($config);
+$rodo->run();
