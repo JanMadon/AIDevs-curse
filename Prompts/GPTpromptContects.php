@@ -2,7 +2,7 @@
 
 namespace app\Prompts;
 
-class GPTprompt
+class GPTpromptContects
 {
     private array $conf;
 
@@ -15,8 +15,10 @@ class GPTprompt
     }
 
 
-    function message($system, $user)
+    function message($system, $conversation)
     {
+
+        
         $model = 'gpt-4';
         $payload = [
             'model' => $model,
@@ -25,12 +27,10 @@ class GPTprompt
                     'role' => 'system',
                     'content' => $system
                 ],
-                [
-                    'role' => 'user',
-                    'content' => $user
+                ...$conversation
                 ]
-            ]
-        ];
+            ];
+
 
         $payload = json_encode($payload);
         $curl = curl_init('https://api.openai.com/v1/chat/completions');
@@ -49,8 +49,6 @@ class GPTprompt
 
         $response = json_decode($response)->choices;
         $response = (string)$response[0]->message->content;
-        var_dump($response);
-        return $response;
+        return json_decode($response, true);
     }
-
 }

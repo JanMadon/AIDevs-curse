@@ -11,7 +11,6 @@ class Answer
         $jsonData = json_encode([
             "answer" => $answer
         ]);
-        print_r($answer);
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
