@@ -39,7 +39,6 @@ class GPTpromptADA
         curl_close($curl);
 
         $response = json_decode($response)->data[0]->embedding;
-        var_dump($response);
         return (array)$response;
     }
 

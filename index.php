@@ -5,6 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use app\Tasks\Functions;
 use app\Tasks\Rodo;
 use app\Tasks\Scraper;
+use app\Tasks\Search;
 use app\Tasks\Whoami;
 
 $config = require_once('conf.php');
@@ -32,5 +33,8 @@ $config = require_once('conf.php');
 // $scraper = new Scraper($config);
 // $scraper->run();
 
-$whoami = new Whoami($config);
-$whoami->run();
+//$whoami = new Whoami($config);
+//$whoami->run();
+
+$search = new Search($config);
+$search->run();
