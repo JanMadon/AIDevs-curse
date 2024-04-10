@@ -4,7 +4,6 @@ namespace app\Tasks;
 
 use app\Answer\Answer;
 use app\Prompts\GPTpromptADA;
-use app\Prompts\GPTpromptContects;
 
 class Search
 {
@@ -45,21 +44,15 @@ class Search
         // przerób pytanie na embeding
         $prompt = new GPTpromptADA($this->conf);
         $embedingQuestion = $prompt->message($response['task']['question']);
-        print_r($embedingQuestion);
 
         // wyszukaj w bazie za pomocą embedingu:
+        $answer = $this->search($embedingQuestion,  $colectionName);
+        var_dump($answer->payload->url);
 
+        // wyślij odpowiedz do AiDevs
+        $res = Answer::answer($response['token'], $answer->payload->url);
+        print_r($res);
 
-
-        
-
-       
-
-
-
-        exit();
-
-        // Embedinguj go
     }
 
     private function checkCollectionExists($name)
@@ -148,5 +141,26 @@ class Search
             //  }
          }
          return $data;
+    }
+
+    private function search(array $embedingQuestion, string $colection)
+    {
+        
+        $payLoad = json_encode([
+            'vector' => $embedingQuestion,
+            'limit' => 1,
+            "with_payload" => true
+        ]);
+        
+        $curl = curl_init("http://localhost:6333/collections/$colection/points/search");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payLoad);
+
+        $answer = json_decode(curl_exec($curl));
+        print_r(curl_error($curl));
+        curl_close($curl);
+
+        return  $answer->result[0];
     }
 }
