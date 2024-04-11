@@ -20,7 +20,7 @@ class GPTpromptADA
         $payload = [
             'model' => 'text-embedding-ada-002',
             'encoding_format' => 'float',
-            'input' => $input
+            'input' => json_encode($input)
         ];
 
         $payload = json_encode($payload);
@@ -39,6 +39,7 @@ class GPTpromptADA
         curl_close($curl);
 
         $response = json_decode($response)->data[0]->embedding;
+
         return (array)$response;
     }
 
