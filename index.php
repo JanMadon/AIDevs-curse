@@ -3,6 +3,7 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use app\Tasks\Functions;
+use app\Tasks\Knowledge;
 use app\Tasks\People;
 use app\Tasks\Rodo;
 use app\Tasks\Scraper;
@@ -40,5 +41,8 @@ $config = require_once('conf.php');
 // $search = new Search($config);
 // $search->run();
 
-$search = new People($config);
-$search->run();
+// $people = new People($config);
+// $peolpe->run();
+
+$knowledge = new Knowledge($config);
+$knowledge->run();
