@@ -9,7 +9,7 @@ class Answer
         $url = "https://tasks.aidevs.pl/answer/$token";
 
         $jsonData = json_encode([
-            "answer" => json_decode($answer)
+            "answer" => $answer
         ]);
 
         $data = json_decode($jsonData, true);

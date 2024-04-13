@@ -3,6 +3,7 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use app\Tasks\Functions;
+use app\Tasks\Gnome;
 use app\Tasks\Knowledge;
 use app\Tasks\People;
 use app\Tasks\Rodo;
@@ -48,5 +49,8 @@ $config = require_once('conf.php');
 // $knowledge = new Knowledge($config);
 // $knowledge->run();
 
-$tools = new Tools($config);
-$tools->run();
+// $tools = new Tools($config);
+// $tools->run();
+
+$gnome = new Gnome($config);
+$gnome->run();
