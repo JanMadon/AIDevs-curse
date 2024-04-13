@@ -8,6 +8,7 @@ use app\Tasks\People;
 use app\Tasks\Rodo;
 use app\Tasks\Scraper;
 use app\Tasks\Search;
+use app\Tasks\Tools;
 use app\Tasks\Whoami;
 
 $config = require_once('conf.php');
@@ -44,5 +45,8 @@ $config = require_once('conf.php');
 // $people = new People($config);
 // $peolpe->run();
 
-$knowledge = new Knowledge($config);
-$knowledge->run();
+// $knowledge = new Knowledge($config);
+// $knowledge->run();
+
+$tools = new Tools($config);
+$tools->run();
