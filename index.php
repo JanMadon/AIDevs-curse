@@ -5,6 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use app\Tasks\Functions;
 use app\Tasks\Gnome;
 use app\Tasks\Knowledge;
+use app\Tasks\OwnApiCall;
 use app\Tasks\People;
 use app\Tasks\Rodo;
 use app\Tasks\Scraper;
@@ -52,5 +53,8 @@ $config = require_once('conf.php');
 // $tools = new Tools($config);
 // $tools->run();
 
-$gnome = new Gnome($config);
-$gnome->run();
+// $gnome = new Gnome($config);
+// $gnome->run();
+
+$ownApiCall = new OwnApiCall($config);
+$ownApiCall->run();

@@ -49,7 +49,7 @@ class GPTprompt
 
         $response = json_decode($response)->choices;
         $response = (string)$response[0]->message->content;
-        var_dump($response);
+        //var_dump($response);
         return $response;
     }
 
