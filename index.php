@@ -6,6 +6,7 @@ use app\Tasks\Functions;
 use app\Tasks\Gnome;
 use app\Tasks\Knowledge;
 use app\Tasks\OwnApiCall;
+use app\Tasks\OwnApiProCall;
 use app\Tasks\People;
 use app\Tasks\Rodo;
 use app\Tasks\Scraper;
@@ -56,5 +57,8 @@ $config = require_once('conf.php');
 // $gnome = new Gnome($config);
 // $gnome->run();
 
-$ownApiCall = new OwnApiCall($config);
-$ownApiCall->run();
+// $ownApiCall = new OwnApiCall($config);
+// $ownApiCall->run();
+
+$ownApiProCall = new OwnApiProCall($config);
+$ownApiProCall->run();
