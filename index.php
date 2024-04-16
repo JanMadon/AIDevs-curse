@@ -5,6 +5,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 use app\Tasks\Functions;
 use app\Tasks\Gnome;
 use app\Tasks\Knowledge;
+use app\Tasks\Meme;
 use app\Tasks\OwnApiCall;
 use app\Tasks\OwnApiProCall;
 use app\Tasks\People;
@@ -60,5 +61,8 @@ $config = require_once('conf.php');
 // $ownApiCall = new OwnApiCall($config);
 // $ownApiCall->run();
 
-$ownApiProCall = new OwnApiProCall($config);
-$ownApiProCall->run();
+// $ownApiProCall = new OwnApiProCall($config);
+// $ownApiProCall->run();
+
+$meme = new Meme($config);
+$meme->run();
