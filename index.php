@@ -2,8 +2,10 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use app\Prompts\GPTprompt;
 use app\Tasks\Functions;
 use app\Tasks\Gnome;
+use app\Tasks\Google;
 use app\Tasks\Knowledge;
 use app\Tasks\Meme;
 use app\Tasks\Optimaldb;
@@ -68,5 +70,10 @@ $config = require_once('conf.php');
 // $meme = new Meme($config);
 // $meme->run();
 
-$optimaldb = new Optimaldb($config);
-$optimaldb->run();
+// $optimaldb = new Optimaldb($config);
+// $optimaldb->run();
+
+$google = new Google($config);
+$google->run();
+
+
