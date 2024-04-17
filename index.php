@@ -6,6 +6,7 @@ use app\Tasks\Functions;
 use app\Tasks\Gnome;
 use app\Tasks\Knowledge;
 use app\Tasks\Meme;
+use app\Tasks\Optimaldb;
 use app\Tasks\OwnApiCall;
 use app\Tasks\OwnApiProCall;
 use app\Tasks\People;
@@ -64,5 +65,8 @@ $config = require_once('conf.php');
 // $ownApiProCall = new OwnApiProCall($config);
 // $ownApiProCall->run();
 
-$meme = new Meme($config);
-$meme->run();
+// $meme = new Meme($config);
+// $meme->run();
+
+$optimaldb = new Optimaldb($config);
+$optimaldb->run();

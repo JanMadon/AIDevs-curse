@@ -17,7 +17,7 @@ class GPTprompt
 
     function message($system, $user)
     {
-        $model = 'gpt-4';
+        $model = 'gpt-3.5-turbo';
         $payload = [
             'model' => $model,
             'messages' => [
@@ -33,6 +33,7 @@ class GPTprompt
         ];
 
         $payload = json_encode($payload);
+
         $curl = curl_init('https://api.openai.com/v1/chat/completions');
         curl_setopt($curl, CURLOPT_POST, true); // podobnu usi być true bo inaczej bedzie GET
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
@@ -46,7 +47,9 @@ class GPTprompt
         $response = curl_exec($curl);
         echo curl_error($curl) ? 'Curl error: ' . curl_error($curl) : '';
         curl_close($curl);
+        echo '__________________________________________________________';
 
+        print_r($response);
         $response = json_decode($response)->choices;
         $response = (string)$response[0]->message->content;
         //var_dump($response);
