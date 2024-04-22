@@ -7,6 +7,7 @@ use app\Tasks\Functions;
 use app\Tasks\Gnome;
 use app\Tasks\Google;
 use app\Tasks\Knowledge;
+use app\Tasks\Md2html;
 use app\Tasks\Meme;
 use app\Tasks\Optimaldb;
 use app\Tasks\OwnApiCall;
@@ -73,7 +74,11 @@ $config = require_once('conf.php');
 // $optimaldb = new Optimaldb($config);
 // $optimaldb->run();
 
-$google = new Google($config);
-$google->run();
+// $google = new Google($config);
+// $google->run();
 
+// $md2html = new Md2html($config);
+// $md2html->run();
 
+// $file = file_get_contents('aidevs_dane_ft1.jsonl');
+// print_r(json_decode($file, true));
