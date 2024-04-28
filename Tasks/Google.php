@@ -32,11 +32,14 @@ class Google
         print_r($res);
         exit();
         
-        // $client = new GoogleSearchResults("1f2b8d12ffdf7482b31533c255a247b907ec9b0fb2bef4b46143a370ea618221");
-        // $query = ["q" => "Szukam adresu strony na której mogę się zapisać na newsletter prowadzony przez Jakuba Mrugalskiego. To jakiś newsletter technologiczny, ale nie pamietam nazwy", "gl" => "pl"];
-        // $response = $client->get_json($query);
-        // print_r($response->organic_results[1]);
+        
+        /*
+        $client = new GoogleSearchResults($this->conf['serpapi-key']);
 
+        $query = ["q" => "Szukam adresu strony na której mogę się zapisać na newsletter prowadzony przez Jakuba Mrugalskiego. To jakiś newsletter technologiczny, ale nie pamietam nazwy", "gl" => "pl"];
+        $response = $client->get_json($query);
+        print_r($response->organic_results[1]);
+        */
     
     }
 }
