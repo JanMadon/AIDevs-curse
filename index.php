@@ -44,8 +44,8 @@ $config = require_once('conf.php');
 // $scraper = new Scraper($config);
 // $scraper->run();
 
-//$whoami = new Whoami($config);
-//$whoami->run();
+// $whoami = new Whoami($config);
+// $whoami->run();
 
 // $search = new Search($config);
 // $search->run();
@@ -74,6 +74,7 @@ $config = require_once('conf.php');
 // $optimaldb = new Optimaldb($config);
 // $optimaldb->run();
 
+// // c05l03-pamiec-dlugoterminowa -> https://serpapi.com/ //logowanie przez githab
 // $google = new Google($config);
 // $google->run();
 

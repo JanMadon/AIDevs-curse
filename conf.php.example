@@ -1,0 +1,8 @@
+<?php
+
+return [
+    "apikey-aidevs" => "api key to AIDevs",
+    "openAi-key" => "api key to opeanApi",
+    "render-form" => "api key to renderForm",
+    "serpapi-key" => "api key to serpapi"
+];
