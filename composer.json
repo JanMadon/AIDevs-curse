@@ -14,6 +14,7 @@
     "require": {
         "ext-json": "*",
         "ext-curl": "*",
-        "serpapi/google-search-results-php": "^1.2"
+        "serpapi/google-search-results-php": "^1.2",
+        "vlucas/phpdotenv": "^5.6"
     }
 }
