@@ -8,9 +8,13 @@ require_once __DIR__ . '/Utils/debug.php'; // to Debug dd();
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-dd($_SERVER['REQUEST_METHOD'] === "GET");
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
+    print_r($_POST);
+};
 
 
 $app = new Application($_ENV);
 
 $app->router->get('/', 'home');
+
+
