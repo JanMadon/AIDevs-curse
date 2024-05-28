@@ -15,6 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
 $app = new Application($_ENV);
 
+print_r($app->request->getBody('selectedTask'));
+
 $app->router->get('/', 'home');
 
 
+//$app->router->get('/', 'home');

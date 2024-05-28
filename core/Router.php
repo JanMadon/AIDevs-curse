@@ -28,7 +28,7 @@ class Router
         }
 
         if($path == '/helloapi'){
-            
+            echo 'siema z helloapi';
         }
     }
 
