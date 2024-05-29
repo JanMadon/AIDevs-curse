@@ -2,39 +2,39 @@
 
 namespace app\core;
 
+use Exception;
+
 class Router
 {
-    public View $view;
-
-    public function __construct()
-    {
-        $this->view = new View();
-    }
-
-    public function isGet()
-    {
-        return $_SERVER['REQUEST_METHOD'] === "GET";
-    }
-
-    public function isPost()
-    {
-        return $_SERVER['REQUEST_METHOD'] === "POST";
-    }
 
     public function get($path, $callback): void
     {
-        if($path == '/'){
-            $this->view->main();
-        }
+        $this->validate($callback);
 
-        if($path == '/helloapi'){
-            echo 'siema z helloapi';
-        }
+        list($controllerClass, $method) = $callback;
+        $controller = new $controllerClass();
+        $controller->$method();
     }
 
-    // public function post($path, $callback): void
-    // {
-    //     $this->routes['post'][$path] = $callback;
-    // }
+    public function post($path, $callback): void
+    {
+        $this->validate($callback);
 
+        list($controllerClass, $method) = $callback;
+        $controller = new $controllerClass();
+        $controller->$method();
+    }
+
+    private function validate($callback)
+    {
+        if (is_array($callback) && count($callback) === 2) {
+            if (class_exists($callback[0]) && method_exists($callback[0], $callback[1])) {
+                return true;
+            } else {
+                throw new Exception('controller or method does not exist.');
+            }
+        } else {
+            throw new Exception('Invalid callback provided.');
+        }
+    }
 }

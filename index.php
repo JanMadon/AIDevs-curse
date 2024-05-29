@@ -1,5 +1,6 @@
 <?php
 
+use app\controllers\HomeController;
 use app\core\Application;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -17,7 +18,14 @@ $app = new Application($_ENV);
 
 print_r($app->request->getBody('selectedTask'));
 
-$app->router->get('/', 'home');
+$app->router->get('/', [HomeController::class, 'index']);
+// $app->router->get('/', 'home');
+// $app->router->get('/', 'home');
+// $app->router->get('/', 'home');
+// $app->router->get('/', 'home');
+// $app->router->get('/', 'home');
+// $app->router->get('/', 'home');
+// $app->router->get('/', 'home');
 
 
 //$app->router->get('/', 'home');
