@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Prompts;
+namespace app\GPT;
 
 class GPT4vision
 {

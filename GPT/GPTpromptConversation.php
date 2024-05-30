@@ -1,8 +1,8 @@
 <?php
 
-namespace app\Prompts;
+namespace app\GPT;
 
-class GPTpromptContects
+class GPTpromptConversation
 {
     private array $conf;
 
@@ -15,10 +15,39 @@ class GPTpromptContects
     }
 
 
-    function message($system, $conversation)
+    function message($system, $user)
     {
+        file_put_contents('conversation.txt',  "U: $user \n", FILE_APPEND);
 
-        
+        //Sprawdz co jest w pliku
+        $file = fopen('conversation.txt', "r");
+
+        $conversation = [];
+
+        if ($file) {
+            while (($line = fgets($file)) !== false) {
+
+                if (strpos($line, 'U:') === 0) {
+                    $conversation[] = [
+                        'role' => 'user',
+                        'content' => substr($line, 3)
+                    ];
+                }
+
+                if (strpos($line, 'A:') === 0) {
+                    $conversation[] = [
+                        'role' => 'assistant',
+                        'content' => substr($line, 3)
+                    ];
+                }
+            }
+
+            fclose($file);
+
+        } else {
+            echo "Nie udało się otworzyć pliku.";
+        }
+
         $model = 'gpt-4';
         $payload = [
             'model' => $model,
@@ -28,8 +57,8 @@ class GPTpromptContects
                     'content' => $system
                 ],
                 ...$conversation
-                ]
-            ];
+            ]
+        ];
 
 
         $payload = json_encode($payload);
@@ -49,6 +78,10 @@ class GPTpromptContects
 
         $response = json_decode($response)->choices;
         $response = (string)$response[0]->message->content;
-        return json_decode($response, true);
+
+        // zapisz odpowiedz w pliku
+        file_put_contents('conversation.txt',  "A: $response \n", FILE_APPEND);
+
+        return $response;
     }
 }

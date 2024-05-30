@@ -39,7 +39,6 @@
             WYNIKI:
             <?php if($param): ?> 
             <table class="table caption-top">
-                <caption>List of users</caption>
                 <thead>
                     <tr>
                         <th scope="col">#</th>

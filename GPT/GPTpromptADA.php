@@ -1,6 +1,7 @@
 <?php
 
-namespace app\Prompts;
+namespace app\GPT;
+
 class GPTpromptADA
 {
     private array $conf;
