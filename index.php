@@ -10,9 +10,6 @@ require_once __DIR__ . '/Utils/debug.php'; // to Debug dd();
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-dd($_SERVER['REQUEST_URI']);
-
-
 $app = new Application($_ENV);
 
 //print_r($app->request->getBody('selectedTask'));

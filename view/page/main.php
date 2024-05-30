@@ -11,9 +11,8 @@
 </head>
 
 <body>
-    <?php dd($param) ?>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-5">
             <form action="/" method="GET" id=taskForm>
                 <div class="mb-3">
                     <label for="formGroupExampleInput" class="form-label">Example label</label>
@@ -25,7 +24,7 @@
                 </div>
 
                 <label for="formGroupExampleInput2" class="form-label">Task</label>
-                <select class="form-select w-75 mb-3" name="selectedTask" id=taskSelect  aria-label="Default select example">
+                <select class="form-select w-75 mb-3" name="selectedTask" id=taskSelect aria-label="Default select example">
                     <option selected>select task</option>
                     <option value="helloapi">helloapi</option>
                     <option value="moderation">moderation</option>
@@ -36,8 +35,33 @@
             </form>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-7">
             WYNIKI:
+            <?php if($param): ?> 
+            <table class="table caption-top">
+                <caption>List of users</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Parametr</th>
+                        <th scope="col">Wartość</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $i=1; ?>
+                    <?php foreach ($param as $key => $value) : ?>
+                        <tr>
+                            <th scope="row"> <?php echo $i++;?> </th>
+                            <td><?php echo $key ?></td>
+                            <td><?php echo $value ?></td>
+                            <td>Des</td>
+                        </tr>
+
+                    <?php endforeach ?>
+                </tbody>
+            </table>
+            <?php endif ?>
         </div>
     </div>
 

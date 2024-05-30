@@ -16,16 +16,10 @@ class TaskController extends Controller
         $token = $apiRes['token'];
         
         $answer = new Answer();
-        $resAns = $answer->answer($token, $apiRes['task']['cookie']);
+        $ansRes = $answer->answer($token, $apiRes['task']['cookie']);
 
-        dd($apiRes);
-        dd($resAns);
+        $param = $this->prepareData($apiRes, $apiRes['task']['cookie'], $ansRes);
 
-
-        $param = [
-            'name' => 'hello-api',
-            'taskNr' => 'first',
-        ];
         $this->view->main($param);
     }
 
@@ -37,5 +31,17 @@ class TaskController extends Controller
     public function blogger()
     {
         $this->view->main();
+    }
+
+    protected function prepareData($apiRes, $sentAns, $ansRes)
+    {
+        return [
+            'Token' => $apiRes['token'],
+            'Task msg.' => $apiRes['task']['msg'],
+            'Answer' => $sentAns,
+            'Results code' => $ansRes['code'],
+            'Results msg' => $ansRes['msg'],
+            'Results note' => $ansRes['note'],
+        ];
     }
 }
