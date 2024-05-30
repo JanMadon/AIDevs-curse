@@ -4,15 +4,17 @@ namespace app\core;
 
 class Application
 {
+
     public Router $router;
     public Request $request;
     
-    public function __construct(private array $conf)
+    public static $config;
+    
+    public function __construct(array $config)
     {
-        dd($conf);
-        $this->router = new Router();
+        self::$config = $config;
+        $this->router = new Router($config);
         $this->request = new Request();
-
     }
 
     public function run()

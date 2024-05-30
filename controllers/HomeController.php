@@ -6,10 +6,8 @@ use app\core\Controller;
 
 class HomeController extends Controller
 {
-
     public function index()
     {
-        print_r('siema');
-        //  $this->view->main();
+        $this->view->main();
     }
 }

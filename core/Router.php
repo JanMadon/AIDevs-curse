@@ -6,7 +6,6 @@ use Exception;
 
 class Router
 {
-
     public function get($path, $callback): void
     {
         $this->validate($callback);
