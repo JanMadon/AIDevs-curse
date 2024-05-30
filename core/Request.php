@@ -19,15 +19,19 @@ class Request
     {
         $body = [];
 
-        if($this->isGet()){
+        if ($this->isGet()) {
             $body = $_GET;
         }
 
-        if($this->isPost()){
+        if ($this->isPost()) {
             $body = $_POST;
         }
 
-        return $param ? $body[$param] : $body; 
+        return $param ? $body[$param] : $body;
     }
 
+    public function url()
+    {
+        return $_SERVER['REQUEST_URI'];
+    }
 }

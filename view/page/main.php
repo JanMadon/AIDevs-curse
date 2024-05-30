@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <?php echo __FILE__ ?>
+    <?php dd($param) ?>
     <div class="row">
         <div class="col-md-6">
             <form action="/" method="GET" id=taskForm>

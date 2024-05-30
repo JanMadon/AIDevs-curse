@@ -2,24 +2,31 @@
 
 namespace app\controllers;
 
+use app\AIDevs\Answer;
 use app\AIDevs\Task;
 use app\core\Controller;
 
 class TaskController extends Controller
 {
     public function helloapi()
-    {
-        // odpalamy zadanie
-        // możmy pobrać terść zadania z DB
+    {    
+        $task = new Task($this->config);
+        $apiRes = $task->get('helloapi');
 
-        // $task = new Task($this->config); 
-        // $res = $task->get('helloapi');
-        var_dump($this->config);
-        exit();
-
+        $token = $apiRes['token'];
         
+        $answer = new Answer();
+        $resAns = $answer->answer($token, $apiRes['task']['cookie']);
 
-        $this->view->main();
+        dd($apiRes);
+        dd($resAns);
+
+
+        $param = [
+            'name' => 'hello-api',
+            'taskNr' => 'first',
+        ];
+        $this->view->main($param);
     }
 
     public function moderation()

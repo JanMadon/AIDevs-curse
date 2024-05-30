@@ -9,7 +9,7 @@ class View
     {
     }
 
-    public function main()
+    public function main($param = null)
     {
         $page = dirname(__DIR__) . '/view/page/main.php';
 
