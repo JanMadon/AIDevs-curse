@@ -22,7 +22,7 @@ class Controller
             'Answer' => $sentAns,
             'Results code' => $ansRes['code'],
             'Results msg' => $ansRes['msg'],
-            'Results note' => $ansRes['note'],
+            'Results note' => $ansRes['note'] ?? 'brak danych',
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\AIDevs\Answer;
 use app\AIDevs\Task;
 use app\core\Controller;
+use app\GPT\GPT35turbo;
 use app\GPT\GPTmoderation;
 
 class TaskController extends Controller
@@ -52,13 +53,34 @@ class TaskController extends Controller
         $answer = new Answer();
         $ansRes = $answer->answer($token, $ans);
 
-        $param = $this->prepareData($apiRes, json_encode($ans) , $ansRes);
+        $param = $this->prepareData($apiRes, json_encode($ans), $ansRes);
 
         $this->view->main($param);
     }
 
     public function blogger()
     {
-        $this->view->main();
+        /*
+           Napisz wpis na bloga (w języku polskim) na temat przyrządzania pizzy Margherity. Zadanie w API nazywa się ”blogger”. Jako wejście otrzymasz spis 4 rozdziałów, które muszą pojawić się we wpisie (muszą zostać napisane przez LLM). Jako odpowiedź musisz zwrócić tablicę (w formacie JSON) złożoną z 4 pól reprezentujących te cztery napisane rozdziały, np.: {"answer":["tekst 1","tekst 2","tekst 3","tekst 4"]}
+        */
+
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('blogger');
+        $token = $apiRes['token'];
+
+        $gpt = new GPT35turbo($this->config);
+        $system = "Napisz post na blogu dotyczący dostarczonego konspektu, pisz zwięźle";
+
+        $resGpt = [];
+        foreach ($apiRes['task']['blog'] as $sentence) {
+            $resGpt[] = $gpt->prompt($system, $sentence);
+        }
+        
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $resGpt);
+        $param = $this->prepareData($apiRes, json_encode($resGpt), $ansRes);
+
+        $this->view->main($param);
     }
 }
