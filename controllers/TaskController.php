@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\AIDevs\Answer;
+use app\AIDevs\CustomRequest;
 use app\AIDevs\Task;
 use app\core\Controller;
 use app\GPT\GPT35turbo;
@@ -14,7 +15,6 @@ class TaskController extends Controller
     {
         $task = new Task($this->config);
         $apiRes = $task->get('helloapi');
-
         $token = $apiRes['token'];
 
         $answer = new Answer();
@@ -64,7 +64,6 @@ class TaskController extends Controller
            Napisz wpis na bloga (w języku polskim) na temat przyrządzania pizzy Margherity. Zadanie w API nazywa się ”blogger”. Jako wejście otrzymasz spis 4 rozdziałów, które muszą pojawić się we wpisie (muszą zostać napisane przez LLM). Jako odpowiedź musisz zwrócić tablicę (w formacie JSON) złożoną z 4 pól reprezentujących te cztery napisane rozdziały, np.: {"answer":["tekst 1","tekst 2","tekst 3","tekst 4"]}
         */
 
-
         $task = new Task($this->config);
         $apiRes = $task->get('blogger');
         $token = $apiRes['token'];
@@ -80,6 +79,34 @@ class TaskController extends Controller
         $answer = new Answer();
         $ansRes = $answer->answer($token, $resGpt);
         $param = $this->prepareData($apiRes, json_encode($resGpt), $ansRes);
+
+        $this->view->main($param);
+    }
+
+    public function liar(){
+        // API: wykonaj zadanie o nazwie liar. Jest to mechanizm, który mówi nie na temat w 1/3 przypadków. Twoje zadanie polega na tym, aby do endpointa /task/ wysłać swoje pytanie w języku angielskim (dowolne, np “What is capital of Poland?’) w polu o nazwie ‘question’ (metoda POST, jako zwykłe pole formularza, NIE JSON). System API odpowie na to pytanie (w polu ‘answer’) lub zacznie opowiadać o czymś zupełnie innym, zmieniając temat. Twoim zadaniem jest napisanie systemu filtrującego (Guardrails), który określi (YES/NO), czy odpowiedź jest na temat. Następnie swój werdykt zwróć do systemu sprawdzającego jako pojedyncze słowo YES/NO. Jeśli pobierzesz treść zadania przez API bez wysyłania żadnych dodatkowych parametrów, otrzymasz komplet podpowiedzi. Skąd wiedzieć, czy odpowiedź jest ‘na temat’? Jeśli Twoje pytanie dotyczyło stolicy Polski, a w odpowiedzi otrzymasz spis zabytków w Rzymie, to odpowiedź, którą należy wysłać do API to NO.
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('liar');
+        $token = $apiRes['token'];
+
+        $myQuestion = ['question' => 'What is capital of Poland?'];
+
+        $request = new CustomRequest();
+        $res = $request->post("task/$token", $myQuestion);
+        $res->answer;
+        
+        $gpt = new GPT35turbo($this->config);
+        $system = "Odpowiadam za filtrowanie odpowiedzi, od użytkownika dostaje JSON z polem question oraz answer, sprawdzam czy odpowiedz jest na temat. \n
+        Odpowaidam jednym słowem YES <-gdy jest na temat, NO <- jeśli nie";
+        $user = array_merge($myQuestion, ['answer' => $res->answer]);
+        $user = json_encode($user);
+
+        $resGpt = $gpt->prompt($system, $user);
+       
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $resGpt);
+        $param = $this->prepareData($apiRes, $resGpt, $ansRes);
 
         $this->view->main($param);
     }

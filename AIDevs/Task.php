@@ -40,6 +40,7 @@ class Task
         ]);
 
         $response = json_decode(curl_exec($curl));
+        curl_close($curl);
 
         return $response;
     }
@@ -52,6 +53,8 @@ class Task
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($curl);
         $response = json_decode($response, true);
+        curl_close($curl);
+
         return $response;
     }
 

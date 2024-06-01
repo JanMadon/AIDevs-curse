@@ -28,6 +28,9 @@ switch($app->request->url()) {
     case '/blogger' : 
         $app->router->get('/blogger', [TaskController::class, 'blogger']);
         break;
+    case '/liar' : 
+        $app->router->get('/liar', [TaskController::class, 'liar']);
+        break;
 }
 
 // $app->router->get('/helloapi', [TaskController::class, 'helloapi']);
