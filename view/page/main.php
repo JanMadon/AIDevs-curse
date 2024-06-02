@@ -30,6 +30,7 @@
                     <option value="moderation">moderation</option>
                     <option value="blogger">blogger</option>
                     <option value="liar">liar</option>
+                    <option value="inpromt">inpromt</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>
