@@ -19,7 +19,7 @@ class Controller
         return [
             'Token' => $apiRes['token'],
             'Task msg.' => $apiRes['task']['msg'],
-            'Answer' => $sentAns,
+            'Answer' => is_array($sentAns) ? implode(', ', $sentAns) : $sentAns,
             'Results code' => $ansRes['code'],
             'Results msg' => $ansRes['msg'],
             'Results note' => $ansRes['note'] ?? 'brak danych',

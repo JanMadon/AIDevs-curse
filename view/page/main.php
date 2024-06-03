@@ -31,6 +31,7 @@
                     <option value="blogger">blogger</option>
                     <option value="liar">liar</option>
                     <option value="inpromt">inpromt</option>
+                    <option value="embedding">embedding</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>

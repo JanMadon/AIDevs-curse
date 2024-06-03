@@ -7,6 +7,7 @@ use app\AIDevs\CustomRequest;
 use app\AIDevs\Task;
 use app\core\Controller;
 use app\GPT\GPT35turbo;
+use app\GPT\GPTembeddingADA;
 use app\GPT\GPTmoderation;
 
 class TaskController extends Controller
@@ -136,6 +137,27 @@ class TaskController extends Controller
         $system2 = "Odpowiadaj w języku polskim.
                     Mając dene informacje odpowedz na pytanie użytkownika: \n " . implode('; ', $sentences); 
         $resGpt = $gpt->prompt($system2, $apiRes['task']['question']);
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $resGpt);
+        $param = $this->prepareData($apiRes, $resGpt, $ansRes);
+
+        $this->view->main($param);
+    }
+
+    //2L3
+
+    public function embedding() {
+        //Korzystając z modelu text-embedding-ada-002 wygeneruj embedding dla frazy "Hawaiian pizza" — upewnij się, że to dokładnie to zdanie. Następnie prześlij wygenerowany embedding na endpoint /answer. Konkretnie musi być to format {"answer": [0.003750941, 0.0038711438, 0.0082909055, -0.008753223, -0.02073651, -0.018862579, -0.010596331, -0.022425512, ..., -0.026950065]}. Lista musi zawierać dokładnie 1536 elementów.
+        
+        $task = new Task($this->config);
+        $apiRes = $task->get('embedding');
+        $token = $apiRes['token'];
+
+        $input = 'Hawaiian pizza';
+
+        $gpt = new GPTembeddingADA($this->config);
+        $resGpt = $gpt->prompt($input);
 
         $answer = new Answer();
         $ansRes = $answer->answer($token, $resGpt);

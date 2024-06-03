@@ -34,6 +34,9 @@ switch($app->request->url()) {
     case '/inpromt' : 
         $app->router->get('/inpromt', [TaskController::class, 'inpromt']);
         break;
+    case '/embedding' : 
+        $app->router->get('/embedding', [TaskController::class, 'embedding']);
+        break;
 }
 
 // $app->router->get('/helloapi', [TaskController::class, 'helloapi']);
