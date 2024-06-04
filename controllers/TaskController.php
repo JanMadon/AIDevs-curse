@@ -9,6 +9,7 @@ use app\core\Controller;
 use app\GPT\GPT35turbo;
 use app\GPT\GPTembeddingADA;
 use app\GPT\GPTmoderation;
+use app\GPT\GPTwhisper;
 
 class TaskController extends Controller
 {
@@ -154,7 +155,7 @@ class TaskController extends Controller
         $apiRes = $task->get('embedding');
         $token = $apiRes['token'];
 
-        $input = 'Hawaiian pizza';
+        $input = 'Hawaiian pizza'; // to zdanie zostanie zmienione na embedding vektor[]  
 
         $gpt = new GPTembeddingADA($this->config);
         $resGpt = $gpt->prompt($input);
@@ -164,5 +165,27 @@ class TaskController extends Controller
         $param = $this->prepareData($apiRes, $resGpt, $ansRes);
 
         $this->view->main($param);
+    }
+
+    public function whisper()
+    {
+        // whisper - speech to text, model pozwala na zmianę nagrania (dzwięku) na text 
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('whisper');
+        $token = $apiRes['token'];
+
+        $whisper = new GPTwhisper($this->config);
+        $resGpt = $whisper->prompt(dirname(__DIR__).'\data\mateusz.mp3');
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $resGpt);
+        $param = $this->prepareData($apiRes, $resGpt, $ansRes);
+
+        $this->view->main($param);
+
+       
+        
+
     }
 }

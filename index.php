@@ -37,6 +37,9 @@ switch($app->request->url()) {
     case '/embedding' : 
         $app->router->get('/embedding', [TaskController::class, 'embedding']);
         break;
+    case '/whisper' : 
+        $app->router->get('/whisper', [TaskController::class, 'whisper']);
+        break;
 }
 
 // $app->router->get('/helloapi', [TaskController::class, 'helloapi']);

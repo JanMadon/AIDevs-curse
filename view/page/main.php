@@ -32,6 +32,7 @@
                     <option value="liar">liar</option>
                     <option value="inpromt">inpromt</option>
                     <option value="embedding">embedding</option>
+                    <option value="whisper">whisper</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>
