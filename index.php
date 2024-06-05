@@ -40,6 +40,9 @@ switch($app->request->url()) {
     case '/whisper' : 
         $app->router->get('/whisper', [TaskController::class, 'whisper']);
         break;
+    case '/functions' : 
+        $app->router->get('/functions', [TaskController::class, 'functions']);
+        break;
 }
 
 // $app->router->get('/helloapi', [TaskController::class, 'helloapi']);

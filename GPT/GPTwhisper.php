@@ -38,7 +38,7 @@ class GPTwhisper
             // throw...
             echo curl_error($curl) ? 'Curl error: ' . curl_error($curl) : '';
         }
-        
+
         $response = curl_exec($curl);
         curl_close($curl);
         // zwróci stringa

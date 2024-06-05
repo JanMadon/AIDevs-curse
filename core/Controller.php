@@ -16,6 +16,7 @@ class Controller
 
     protected function prepareData($apiRes, $sentAns, $ansRes)
     {
+        dd($sentAns);
         return [
             'Token' => $apiRes['token'],
             'Task msg.' => $apiRes['task']['msg'],

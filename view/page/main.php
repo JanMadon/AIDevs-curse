@@ -33,6 +33,7 @@
                     <option value="inpromt">inpromt</option>
                     <option value="embedding">embedding</option>
                     <option value="whisper">whisper</option>
+                    <option value="functions">functions</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>

@@ -77,7 +77,7 @@ class TaskController extends Controller
         foreach ($apiRes['task']['blog'] as $sentence) {
             $resGpt[] = $gpt->prompt($system, $sentence);
         }
-        
+
         $answer = new Answer();
         $ansRes = $answer->answer($token, $resGpt);
         $param = $this->prepareData($apiRes, json_encode($resGpt), $ansRes);
@@ -86,7 +86,8 @@ class TaskController extends Controller
     }
 
     //1L5
-    public function liar(){
+    public function liar()
+    {
         // API: wykonaj zadanie o nazwie liar. Jest to mechanizm, który mówi nie na temat w 1/3 przypadków. Twoje zadanie polega na tym, aby do endpointa /task/ wysłać swoje pytanie w języku angielskim (dowolne, np “What is capital of Poland?’) w polu o nazwie ‘question’ (metoda POST, jako zwykłe pole formularza, NIE JSON). System API odpowie na to pytanie (w polu ‘answer’) lub zacznie opowiadać o czymś zupełnie innym, zmieniając temat. Twoim zadaniem jest napisanie systemu filtrującego (Guardrails), który określi (YES/NO), czy odpowiedź jest na temat. Następnie swój werdykt zwróć do systemu sprawdzającego jako pojedyncze słowo YES/NO. Jeśli pobierzesz treść zadania przez API bez wysyłania żadnych dodatkowych parametrów, otrzymasz komplet podpowiedzi. Skąd wiedzieć, czy odpowiedź jest ‘na temat’? Jeśli Twoje pytanie dotyczyło stolicy Polski, a w odpowiedzi otrzymasz spis zabytków w Rzymie, to odpowiedź, którą należy wysłać do API to NO.
 
         $task = new Task($this->config);
@@ -98,7 +99,7 @@ class TaskController extends Controller
         $request = new CustomRequest();
         $res = $request->post("task/$token", $myQuestion);
         $res->answer;
-        
+
         $gpt = new GPT35turbo($this->config);
         $system = "Odpowiadam za filtrowanie odpowiedzi, od użytkownika dostaje JSON z polem question oraz answer, sprawdzam czy odpowiedz jest na temat. \n
         Odpowaidam jednym słowem YES <-gdy jest na temat, NO <- jeśli nie";
@@ -106,7 +107,7 @@ class TaskController extends Controller
         $user = json_encode($user);
 
         $resGpt = $gpt->prompt($system, $user);
-       
+
         $answer = new Answer();
         $ansRes = $answer->answer($token, $resGpt);
         $param = $this->prepareData($apiRes, $resGpt, $ansRes);
@@ -136,7 +137,7 @@ class TaskController extends Controller
         }
 
         $system2 = "Odpowiadaj w języku polskim.
-                    Mając dene informacje odpowedz na pytanie użytkownika: \n " . implode('; ', $sentences); 
+                    Mając dene informacje odpowedz na pytanie użytkownika: \n " . implode('; ', $sentences);
         $resGpt = $gpt->prompt($system2, $apiRes['task']['question']);
 
         $answer = new Answer();
@@ -148,9 +149,10 @@ class TaskController extends Controller
 
     //2L3
 
-    public function embedding() {
+    public function embedding()
+    {
         //Korzystając z modelu text-embedding-ada-002 wygeneruj embedding dla frazy "Hawaiian pizza" — upewnij się, że to dokładnie to zdanie. Następnie prześlij wygenerowany embedding na endpoint /answer. Konkretnie musi być to format {"answer": [0.003750941, 0.0038711438, 0.0082909055, -0.008753223, -0.02073651, -0.018862579, -0.010596331, -0.022425512, ..., -0.026950065]}. Lista musi zawierać dokładnie 1536 elementów.
-        
+
         $task = new Task($this->config);
         $apiRes = $task->get('embedding');
         $token = $apiRes['token'];
@@ -167,25 +169,56 @@ class TaskController extends Controller
         $this->view->main($param);
     }
 
+    //2L4
     public function whisper()
     {
         // whisper - speech to text, model pozwala na zmianę nagrania (dzwięku) na text 
-
         $task = new Task($this->config);
         $apiRes = $task->get('whisper');
         $token = $apiRes['token'];
 
         $whisper = new GPTwhisper($this->config);
-        $resGpt = $whisper->prompt(dirname(__DIR__).'\data\mateusz.mp3');
+        $resGpt = $whisper->prompt(dirname(__DIR__) . '\data\mateusz.mp3');
 
         $answer = new Answer();
         $ansRes = $answer->answer($token, $resGpt);
         $param = $this->prepareData($apiRes, $resGpt, $ansRes);
 
         $this->view->main($param);
+    }
 
-       
-        
+    //2L5
+    public function functions()
+    {
+        // Wykonaj zadanie o nazwie functions zgodnie ze standardem zgłaszania odpowiedzi opisanym na tasks.aidevs.pl. Zadanie polega na zdefiniowaniu funkcji o nazwie addUser, która przyjmuje jako parametr obiekt z właściwościami: imię (name, string), nazwisko (surname, string) oraz rok urodzenia osoby (year, integer). Jako odpowiedź musisz wysłać jedynie ciało funkcji w postaci JSON-a. Jeśli nie wiesz, w jakim formacie przekazać dane, rzuć okiem na hinta: https://tasks.aidevs.pl/hint/functions 
 
+        $task = new Task($this->config);
+        $apiRes = $task->get('functions');
+        $token = $apiRes['token'];
+
+        $func = [
+            'name' => 'addUser',
+            'description' => 'the function can add user to system',
+            'parameters' => [
+                'type' => 'object',
+                'properties' => [
+                    'name' => [
+                        'type' => 'string',
+                    ],
+                    'surname' => [
+                        'type' => 'string',
+                    ],
+                    'year' => [
+                        'type' => 'integer',
+                    ]
+                ]
+            ]
+        ];
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $func);
+        $param = $this->prepareData($apiRes, $func, $ansRes);
+
+        $this->view->main($param);
     }
 }
