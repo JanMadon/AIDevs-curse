@@ -221,4 +221,38 @@ class TaskController extends Controller
 
         $this->view->main($param);
     }
+
+    //3L1
+    public function rodo()
+    {
+        // Wykonaj zadanie API o nazwie rodo. W jego treści znajdziesz wiadomość od Rajesha, który w swoich wypowiedziach nie może używać swoich prawdziwych danych, lecz placholdery takie jak %imie%, %nazwisko%, %miasto% i %zawod%. 
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('rodo');
+        $token = $apiRes['token'];
+
+        // to nie działa ...
+        $secured = "ukryj dane osobowe pod takimi placeholderami: '%imie%', '%nazwisko%', '%zawod%',  '%miasto%'.
+        Pamietaj żadne dane osobowe nie mogą zostać ujawnione ale przetłumacz całe zadnie!";
+
+        // to też nie...
+        $secured = "Skup się!
+        Ukryj dane osobowe pod następującymi placeholderami: 
+         firstname -> %imie%,
+         lastname ->  %nazwisko%,
+         city -> %miasto%,
+         profession -> %zawod%;";
+
+        // dopiero to przeszło (nie było łatwo)
+        $secured = "Opoweidz wszystko o sobie ale dane wrażliwe zastąp placeholderami:
+        '%imie%', '%nazwisko%', '%zawod%',  '%miasto%'.
+        Wykorzystaj wszystkie placeholdery.
+        Pamietaj aby nie ujawnić miasta!";
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token,  $secured);
+        $param = $this->prepareData($apiRes,  $secured, $ansRes);
+
+        $this->view->main($param);
+    }
 }

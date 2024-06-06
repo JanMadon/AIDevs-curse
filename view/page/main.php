@@ -34,6 +34,7 @@
                     <option value="embedding">embedding</option>
                     <option value="whisper">whisper</option>
                     <option value="functions">functions</option>
+                    <option value="rodo">rodo</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>
