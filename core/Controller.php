@@ -16,14 +16,23 @@ class Controller
 
     protected function prepareData($apiRes, $sentAns, $ansRes)
     {
-        dd($sentAns);
         return [
             'Token' => $apiRes['token'],
             'Task msg.' => $apiRes['task']['msg'],
-            'Answer' => is_array($sentAns) ? implode(', ', $sentAns) : $sentAns,
+            'Answer' => is_array($sentAns) ? json_encode($sentAns) : $sentAns,
             'Results code' => $ansRes['code'],
             'Results msg' => $ansRes['msg'],
             'Results note' => $ansRes['note'] ?? 'brak danych',
         ];
+    }
+
+
+    public function isNestedArray($array){
+        foreach($array as $value) {
+            if(is_array($value)){
+                return true;
+            }
+        }
+        return false;
     }
 }
