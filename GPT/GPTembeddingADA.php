@@ -2,6 +2,9 @@
 
 namespace app\GPT;
 
+// Embedding to reprezentacja tekstu w postaci wektora liczbowego, która pozwala modelowi zrozumieć i operować na danych językowych. W kontekście modelu text-embedding-ada-002 OpenAI, embeddingi są używane do mapowania słów, fraz lub dokumentów na wektory w przestrzeni wielowymiarowej, gdzie semantycznie podobne teksty mają podobne reprezentacje. Dzięki temu można efektywnie przeprowadzać zadania takie jak klasyfikacja, wyszukiwanie informacji czy analiza sentymentu.
+
+// https://platform.openai.com/docs/guides/embeddings
 class GPTembeddingADA
 {
     public function __construct(private array $conf)

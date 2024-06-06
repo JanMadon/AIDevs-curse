@@ -4,6 +4,9 @@ namespace app\GPT;
 
 use CURLFile;
 
+// Fine-tuning w OpenAI polega na adaptacji wcześniej wytrenowanego modelu do specyficznych zadań lub zestawów danych. Proces ten pozwala modelowi lepiej wykonywać określone zadania, na przykład rozumienie kontekstu w danej dziedzinie, generowanie tekstu w specyficznym stylu, czy rozwiązywanie problemów specyficznych dla danej branży.
+
+// https://platform.openai.com/docs/guides/fine-tuning
 class FineTuning
 {
     private array $conf;

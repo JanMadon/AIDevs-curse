@@ -2,6 +2,15 @@
 
 namespace app\GPT;
 
+
+// Model Whisper-1 od OpenAI to system przetwarzania mowy, który konwertuje mowę na tekst. Działa on w następujący sposób:
+
+// Transkrypcja Mowy: Przekształca dźwięk mowy na tekst pisany.
+// Rozpoznawanie Języka: Automatycznie rozpoznaje i transkrybuje różne języki.
+// Szerokie Zastosowanie: Może być używany w aplikacjach takich jak automatyczne napisy, asystenci głosowi, notatki głosowe, itd.
+// Whisper-1 jest zaprojektowany do dokładnego i skutecznego rozpoznawania mowy, nawet w trudnych warunkach akustycznych.
+
+// https://platform.openai.com/docs/guides/speech-to-text
 class GPTwhisper
 {
     /**
