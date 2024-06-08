@@ -294,4 +294,43 @@ class TaskController extends Controller
         $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
         $this->view->main($param);
     }
+
+     //3L3
+     public function whoami()
+     {
+        // Rozwiąż zadanie o nazwie “whoami”. Za każdym razem, gdy pobierzesz zadanie, system zwróci Ci jedną ciekawostkę na temat pewnej osoby. Twoim zadaniem jest zbudowanie mechanizmu, który odgadnie, co to za osoba. W zadaniu chodzi o utrzymanie wątku w konwersacji z backendem. Jest to dodatkowo utrudnione przez fakt, że token ważny jest tylko 2 sekundy (trzeba go cyklicznie odświeżać!). Celem zadania jest napisania mechanizmu, który odpowiada, czy na podstawie otrzymanych hintów jest w stanie powiedzieć, czy wie, kim jest tajemnicza postać. Jeśli odpowiedź brzmi NIE, to pobierasz kolejną wskazówkę i doklejasz ją do bieżącego wątku. Jeśli odpowiedź brzmi TAK, to zgłaszasz ją do /answer/. Wybraliśmy dość ‘ikoniczną’ postać, więc model powinien zgadnąć, o kogo chodzi, po maksymalnie 5-6 podpowiedziach. Zaprogramuj mechanizm tak, aby wysyłał dane do /answer/ tylko, gdy jest absolutnie pewny swojej odpowiedzi.
+ 
+        $task = new Task($this->config);
+        $gpt = new GPT35turbo($this->config);
+
+        $system = 'Gramy w grę who I am, tzn: użytkownik podaje Ci ciekawostkę o pewnej osobie, jesli wiesz o kogo chodzi zwróć imię i nazwisko tej osoby, ale jeśli potrzebujesz wiecej danych zwróć słowo FALSE. Masz 5 prób. Pamiętaj odpowiedz gdy bedziesz pewien przynajmniej w 95% !!!';
+
+        $continue = true;
+        while($continue){
+            $apiRes = $task->get('whoami');
+            $token = $apiRes['token'];
+            $conversation[] = [
+                'role' => 'user',
+                'content' => $apiRes['task']['hint']
+            ] ;
+
+            $gptAns = $gpt->prompt($system, $conversation);
+            if(strtolower($gptAns) != 'false' || count($conversation) > 10){
+                $continue = false;
+            }
+
+            $conversation[] =  [
+                'role' => 'assistant',
+                'content' => $gptAns,
+            ]; 
+        }
+        dd($conversation);
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token,  $gptAns);
+    
+        
+        $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
+        $this->view->main($param);
+     }
 }

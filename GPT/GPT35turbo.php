@@ -18,17 +18,19 @@ class GPT35turbo
     function prompt(string $system, array|string $contents)
     {
         $userContent = [];
-        
-        $contents = is_string($contents) ? [$contents] : $contents;
-
-        foreach ($contents as $content) {
-            $userContent[] = [
+          
+        if(is_string($contents)){
+            $contents[] = [
                 'role' => 'user',
-                'content' => $content
+                'content' => $contents
             ];
+        } else {
+
         }
         
+        
         $model = 'gpt-3.5-turbo';
+        //$model = 'gpt-4';
         $payload = [
             'model' => $model,
             'messages' => [
@@ -36,7 +38,7 @@ class GPT35turbo
                     'role' => 'system',
                     'content' => $system
                 ],
-                ...$userContent
+                ...$contents
             ]
         ];
 
