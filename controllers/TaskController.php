@@ -255,4 +255,43 @@ class TaskController extends Controller
 
         $this->view->main($param);
     }
+
+    //3L2
+    public function scraper()
+    {
+        // Rozwiąż zadanie z API o nazwie "scraper". Otrzymasz z API link do artykułu (format TXT), który zawiera pewną wiedzę, oraz pytanie dotyczące otrzymanego tekstu. Twoim zadaniem jest udzielenie odpowiedzi na podstawie artykułu. Trudność polega tutaj na tym, że serwer z artykułami działa naprawdę kiepsko — w losowych momentach zwraca błędy typu "error 500", czasami odpowiada bardzo wolno na Twoje zapytania, a do tego serwer odcina dostęp nieznanym przeglądarkom internetowym. Twoja aplikacja musi obsłużyć każdy z napotkanych błędów. Pamiętaj, że pytania, jak i teksty źródłowe, są losowe, więc nie zakładaj, że uruchamiając aplikację kilka razy, za każdym razem zapytamy Cię o to samo i będziemy pracować na tym samym artykule. 
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('scraper');
+        $token = $apiRes['token'];
+
+        // get input;
+        $request = new CustomRequest($apiRes['task']['input']);
+        $request->addSetopt(
+            [
+                //CURLOPT_TIMEOUT => 15,
+                CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'
+            ]
+        );
+
+        $ansApi = false;
+        $couter = 5;
+        while(!$ansApi && $couter){
+            $ansApi = $request->get(null);
+            $couter--;
+        }
+
+        $system = $apiRes['task']['msg'] . "\n ### \n " . $ansApi;
+        $user = $apiRes['task']['question'];
+
+        $gpt = new GPT35turbo($this->config);
+        $gptAns = $gpt->prompt($system, $user);
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token,  $gptAns);
+     
+        
+        $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
+        $this->view->main($param);
+    }
 }

@@ -35,6 +35,7 @@
                     <option value="whisper">whisper</option>
                     <option value="functions">functions</option>
                     <option value="rodo">rodo</option>
+                    <option value="scraper">scraper</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>
