@@ -37,6 +37,8 @@
                     <option value="rodo">rodo</option>
                     <option value="scraper">scraper</option>
                     <option value="whoami">whoami</option>
+                    <option value="search">search</option>
+                    
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>

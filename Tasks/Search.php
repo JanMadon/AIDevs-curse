@@ -3,6 +3,7 @@
 namespace app\Tasks;
 
 use app\Answer\Answer;
+use app\GPT\GPTembeddingADA;
 use app\Prompts\GPTpromptADA;
 
 class Search
@@ -17,7 +18,8 @@ class Search
         $this->conf = $conf;
     }
 
-    public function run()
+    // do odpalania przez cli
+    public function run() 
     {
         $colectionName = 'searchTask';
         // tworzenie bazy
@@ -42,20 +44,20 @@ class Search
         //$this->addPoints($colectionName, $embedingData);
 
         // przerób pytanie na embeding
-        $prompt = new GPTpromptADA($this->conf);
-        $embedingQuestion = $prompt->message($response['task']['question']);
+        //$prompt = new GPTpromptADA($this->conf);
+        // $embedingQuestion = $prompt->message($response['task']['question']);
 
-        // wyszukaj w bazie za pomocą embedingu:
-        $answer = $this->search($embedingQuestion,  $colectionName);
-        var_dump($answer->payload->url);
+        // // wyszukaj w bazie za pomocą embedingu:
+        // $answer = $this->search($embedingQuestion,  $colectionName);
+        // var_dump($answer->payload->url);
 
-        // wyślij odpowiedz do AiDevs
-        $res = Answer::answer($response['token'], $answer->payload->url);
-        print_r($res);
+        // // wyślij odpowiedz do AiDevs
+        // //$res = Answer::answer($response['token'], $answer->payload->url);
+        // print_r($res);
 
     }
 
-    private function checkCollectionExists($name)
+    public function checkCollectionExists($name)
     {
 
         $curl = curl_init("http://localhost:6333/collections/$name");
@@ -67,7 +69,7 @@ class Search
         return !isset($response->status->error);
     }
 
-    private function createColection($name)
+    public function createColection($name)
     {
 
         $jsonData = json_encode([
@@ -94,7 +96,7 @@ class Search
         return $response;
     }
 
-    private function addPoints(string $colectionName, array $data)
+    public function addPoints(string $colectionName, array $data)
     {
         $payLoad = [];
         foreach ($data['embeding'] as $id => $embeding) {
@@ -124,14 +126,14 @@ class Search
         return $response;
     }
 
-    private function makeEmbeding(array $payload): array
+    public function makeEmbeding(array $payload): array
     {
          // stworzenie embedingu
-         $prompt = new GPTpromptADA($this->conf);
+         $prompt = new GPTembeddingADA($this->conf);
          $data = [];
          foreach ($payload as $index => $item) {
              $concat = $item['title'] . "\n ### \n" . $item['info'];
-             $embeding = $prompt->message($concat); // [0.05,0.61,0.76,0.74 .... -n-> n=1532]
+             $embeding = $prompt->prompt($concat); // [0.05,0.61,0.76,0.74 .... -n-> n=1532]
              $data['embeding'][] = $embeding;
              $data['meta'][] = $item['url'];
 
@@ -143,7 +145,7 @@ class Search
          return $data;
     }
 
-    private function search(array $embedingQuestion, string $colection)
+    public function search(array $embedingQuestion, string $colection)
     {
         
         $payLoad = json_encode([

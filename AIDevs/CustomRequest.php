@@ -28,7 +28,7 @@ class CustomRequest
         return $this->makeRequest($url, 'post', $payload);
     }
 
-    public function get($endpoint)
+    public function get($endpoint, $isResponseJson = null)
     {
         if($endpoint){
             $url = $this->url . '/' . $endpoint;
@@ -42,7 +42,7 @@ class CustomRequest
         $response = curl_exec($curl);
         $response = json_decode($response, true);
         
-        return $this->makeRequest($url, "get");
+        return $this->makeRequest($url, "get", '', false, $isResponseJson);
     }
 
     public function addSetopt(array $setopt)
@@ -50,7 +50,7 @@ class CustomRequest
         $this->setopt = $setopt;
     } 
 
-    private function makeRequest(string $url, string $method, array|string $payload = '', $isJson = false)
+    private function makeRequest(string $url, string $method, array|string $payload = '', $isJson = false, $isReturnJson = false)
     {
         try{
             $curl = curl_init();
@@ -85,7 +85,12 @@ class CustomRequest
             $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE); 
             curl_close($curl);
 
+            
+
             if(json_decode($executed)){
+                if($isReturnJson){
+                    return json_decode($executed, true);
+                }
                return json_decode($executed);
             }
 

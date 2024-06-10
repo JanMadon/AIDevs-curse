@@ -10,6 +10,7 @@ use app\GPT\GPT35turbo;
 use app\GPT\GPTembeddingADA;
 use app\GPT\GPTmoderation;
 use app\GPT\GPTwhisper;
+use app\Tasks\Search;
 
 class TaskController extends Controller
 {
@@ -284,7 +285,7 @@ class TaskController extends Controller
         $system = $apiRes['task']['msg'] . "\n ### \n " . $ansApi;
         $user = $apiRes['task']['question'];
 
-        $gpt = new GPT35turbo($this->config);
+        $gpt = new GPT35turbo($this->config); // do zadnaia musiałem wykorzytać model gpt-4
         $gptAns = $gpt->prompt($system, $user);
 
         $answer = new Answer();
@@ -331,6 +332,76 @@ class TaskController extends Controller
     
         
         $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
+        $this->view->main($param);
+     }
+
+     //3L4
+
+     public function search()
+     {
+        /*
+        ZADANIE:
+        1 - Tworzenie kolekcji bazy wektorowej: https://qdrant.tech/
+        2 - Pobranie zadania
+        3 - tworzenie embedingu z pytania
+        4 - ładowanie danych do bazy wektorowej 
+        5 - przerobienie pytania na embeding
+        6 - wyszukaj na podstawie otrzymanego embedingu
+        7 - wyślij odpowiedż  
+        */
+        
+
+        
+        //włączy bazę docker desktop !!
+        $taskService = new Search($this->config);
+
+        $colectionName = 'searchTask';
+        // tworzenie bazy
+        if (!$taskService->checkCollectionExists($colectionName)) {
+            var_dump('test');
+            $taskService->createColection($colectionName);
+        }
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('search');
+        $token = $apiRes['token'];
+
+       
+
+        // url danych do zadania 
+        /*  $data = arr(128
+            [
+                {
+                    "title": "Czym są 'Feature Flags' i jak ich używać? (film, 53 minuty, PL)",
+                    "url": "https://www.youtube.com/watch?v=qWwnCH9QUsE",
+                    "info": "INFO: Jak wprowadzić do produkcji nową funkcję lub fixa, który być może zadziała, a być może spowoduje pewien problem? Na pomoc przychodzą Feature Flags/Toggles. Tylko jak z nich prawidłowo korzystać i czego unikać? Tego dowiesz się z naszego filmu.",
+                    "date": "2023-10-27"
+                },
+        */
+        $dataURL = 'https://unknow.news/archiwum_aidevs.json';
+        $request = new CustomRequest($dataURL);
+        $data = $request->get(null, true);
+        
+                // Embeding
+        //$embedingData = $taskService->makeEmbeding($data); // <- trwa bardzo długo ...
+    
+            //załaduj dane do bazy
+        //$taskService->addPoints($colectionName, $embedingData);
+
+        // przerób pytanie na embeding
+        $prompt = new GPTembeddingADA($this->config);
+        $embedingQuestion = $prompt->prompt($apiRes['task']['question']);
+
+        // wyszukaj w bazie za pomocą embedingu:
+        $ans = $taskService->search($embedingQuestion,  $colectionName);
+
+        // wyślij odpowiedz do AiDevs
+       
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $ans);
+    
+        
+        $param = $this->prepareData($apiRes,  $$ans, $ansRes);
         $this->view->main($param);
      }
 }
