@@ -18,16 +18,14 @@ class GPT35turbo
     function prompt(string $system, array|string $contents)
     {
         $userContent = [];
-          
+        
         if(is_string($contents)){
-            $contents[] = [
+            $userContent[] = [
                 'role' => 'user',
                 'content' => $contents
             ];
-        } else {
-
+            $contents =  $userContent;
         }
-        
         
         $model = 'gpt-3.5-turbo';
         //$model = 'gpt-4';

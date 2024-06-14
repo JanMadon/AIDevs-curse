@@ -277,7 +277,7 @@ class TaskController extends Controller
 
         $ansApi = false;
         $couter = 5;
-        while(!$ansApi && $couter){
+        while (!$ansApi && $couter) {
             $ansApi = $request->get(null);
             $couter--;
         }
@@ -290,55 +290,54 @@ class TaskController extends Controller
 
         $answer = new Answer();
         $ansRes = $answer->answer($token,  $gptAns);
-     
-        
+
+
         $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
         $this->view->main($param);
     }
 
-     //3L3
-     public function whoami()
-     {
+    //3L3
+    public function whoami()
+    {
         // Rozwiąż zadanie o nazwie “whoami”. Za każdym razem, gdy pobierzesz zadanie, system zwróci Ci jedną ciekawostkę na temat pewnej osoby. Twoim zadaniem jest zbudowanie mechanizmu, który odgadnie, co to za osoba. W zadaniu chodzi o utrzymanie wątku w konwersacji z backendem. Jest to dodatkowo utrudnione przez fakt, że token ważny jest tylko 2 sekundy (trzeba go cyklicznie odświeżać!). Celem zadania jest napisania mechanizmu, który odpowiada, czy na podstawie otrzymanych hintów jest w stanie powiedzieć, czy wie, kim jest tajemnicza postać. Jeśli odpowiedź brzmi NIE, to pobierasz kolejną wskazówkę i doklejasz ją do bieżącego wątku. Jeśli odpowiedź brzmi TAK, to zgłaszasz ją do /answer/. Wybraliśmy dość ‘ikoniczną’ postać, więc model powinien zgadnąć, o kogo chodzi, po maksymalnie 5-6 podpowiedziach. Zaprogramuj mechanizm tak, aby wysyłał dane do /answer/ tylko, gdy jest absolutnie pewny swojej odpowiedzi.
- 
+
         $task = new Task($this->config);
         $gpt = new GPT35turbo($this->config);
 
         $system = 'Gramy w grę who I am, tzn: użytkownik podaje Ci ciekawostkę o pewnej osobie, jesli wiesz o kogo chodzi zwróć imię i nazwisko tej osoby, ale jeśli potrzebujesz wiecej danych zwróć słowo FALSE. Masz 5 prób. Pamiętaj odpowiedz gdy bedziesz pewien przynajmniej w 95% !!!';
 
         $continue = true;
-        while($continue){
+        while ($continue) {
             $apiRes = $task->get('whoami');
             $token = $apiRes['token'];
             $conversation[] = [
                 'role' => 'user',
                 'content' => $apiRes['task']['hint']
-            ] ;
+            ];
 
             $gptAns = $gpt->prompt($system, $conversation);
-            if(strtolower($gptAns) != 'false' || count($conversation) > 10){
+            if (strtolower($gptAns) != 'false' || count($conversation) > 10) {
                 $continue = false;
             }
 
             $conversation[] =  [
                 'role' => 'assistant',
                 'content' => $gptAns,
-            ]; 
+            ];
         }
         dd($conversation);
 
         $answer = new Answer();
         $ansRes = $answer->answer($token,  $gptAns);
-    
-        
+
+
         $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
         $this->view->main($param);
-     }
+    }
 
-     //3L4
-
-     public function search()
-     {
+    //3L4
+    public function search()
+    {
         /*
         ZADANIE:
         1 - Tworzenie kolekcji bazy wektorowej: https://qdrant.tech/
@@ -349,9 +348,9 @@ class TaskController extends Controller
         6 - wyszukaj na podstawie otrzymanego embedingu
         7 - wyślij odpowiedż  
         */
-        
 
-        
+
+
         //włączy bazę docker desktop !!
         $taskService = new Search($this->config);
 
@@ -366,7 +365,7 @@ class TaskController extends Controller
         $apiRes = $task->get('search');
         $token = $apiRes['token'];
 
-       
+
 
         // url danych do zadania 
         /*  $data = arr(128
@@ -381,11 +380,11 @@ class TaskController extends Controller
         $dataURL = 'https://unknow.news/archiwum_aidevs.json';
         $request = new CustomRequest($dataURL);
         $data = $request->get(null, true);
-        
-                // Embeding
+
+        // Embeding
         //$embedingData = $taskService->makeEmbeding($data); // <- trwa bardzo długo ...
-    
-            //załaduj dane do bazy
+
+        //załaduj dane do bazy
         //$taskService->addPoints($colectionName, $embedingData);
 
         // przerób pytanie na embeding
@@ -396,12 +395,60 @@ class TaskController extends Controller
         $ans = $taskService->search($embedingQuestion,  $colectionName);
 
         // wyślij odpowiedz do AiDevs
-       
+
         $answer = new Answer();
         $ansRes = $answer->answer($token, $ans);
-    
-        
+
+
         $param = $this->prepareData($apiRes,  $$ans, $ansRes);
         $this->view->main($param);
-     }
+    }
+
+    //3L05
+    public function people()
+    {
+        //Rozwiąż zadanie o nazwie “people”. Pobierz, a następnie zoptymalizuj odpowiednio pod swoje potrzeby bazę danych https://tasks.aidevs.pl/data/people.json. Twoim zadaniem jest odpowiedź na pytanie zadane przez system. Uwaga! Pytanie losuje się za każdym razem na nowo, gdy odwołujesz się do /task. Spraw, aby Twoje rozwiązanie działało za każdym razem, a także, aby zużywało możliwie mało tokenów. Zastanów się, czy wszystkie operacje muszą być wykonywane przez LLM-a - może warto zachować jakiś balans między światem kodu i AI?
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('people');
+        $token = $apiRes['token'];
+        dd($apiRes);
+
+        $gpt = new GPT35turbo($this->config);
+        $name = $gpt->prompt(
+            "Dostaniesz zdanie w którym znajduję się imię i nazwisko, zwróć JSON z imieniem i nazwiskiem w takim formacie: 
+            \n ### \n
+            {
+                firstname: Jan,
+                lastname: Kowalski
+            } 
+            \n ### \n
+            PS: Zdrobnienia zmieniaj na pełne imię np: Tomek => Tomasz, Krysia => Krystyna    
+            ",
+            $apiRes['task']['question']
+        );
+        $name = json_decode($name); 
+
+        dd($name);
+        
+        $customRequest = new CustomRequest($apiRes['task']['data']);
+        $respones = $customRequest->get(null);
+        
+        $data = [];
+        foreach($respones as $person){
+            if($person->imie === $name->firstname && $person->nazwisko === $name->lastname) {
+                $data[] = $person;
+            }
+        }
+
+        dd($data);
+        $gptAns = $gpt->prompt("Mając dane: \n" .json_encode($data). "\n odpowiedz na pytanie", $apiRes['task']['question']);
+        dd($gptAns);
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $gptAns);
+
+        $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
+        $this->view->main($param);
+    }
 }

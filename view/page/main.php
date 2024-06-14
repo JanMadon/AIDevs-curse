@@ -38,7 +38,7 @@
                     <option value="scraper">scraper</option>
                     <option value="whoami">whoami</option>
                     <option value="search">search</option>
-                    
+                    <option value="people">people</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>
@@ -47,29 +47,29 @@
 
         <div class="col-md-7">
             WYNIKI:
-            <?php if($param): ?> 
-            <table class="table caption-top">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Parametr</th>
-                        <th scope="col">Wartość</th>
-                        <th scope="col">Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php $i=1; ?>
-                    <?php foreach ($param as $key => $value) : ?>
+            <?php if ($param) : ?>
+                <table class="table caption-top">
+                    <thead>
                         <tr>
-                            <th scope="row"> <?php echo $i++;?> </th>
-                            <td><?php echo $key ?></td>
-                            <td><?php echo $value ?></td>
-                            <td>Des</td>
+                            <th scope="col">#</th>
+                            <th scope="col">Parametr</th>
+                            <th scope="col">Wartość</th>
+                            <th scope="col">Description</th>
                         </tr>
+                    </thead>
+                    <tbody>
+                        <?php $i = 1; ?>
+                        <?php foreach ($param as $key => $value) : ?>
+                            <tr>
+                                <th scope="row"> <?php echo $i++; ?> </th>
+                                <td><?php echo $key ?></td>
+                                <td><?php echo $value ?></td>
+                                <td>Des</td>
+                            </tr>
 
-                    <?php endforeach ?>
-                </tbody>
-            </table>
+                        <?php endforeach ?>
+                    </tbody>
+                </table>
             <?php endif ?>
         </div>
     </div>
