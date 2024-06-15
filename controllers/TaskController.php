@@ -412,7 +412,6 @@ class TaskController extends Controller
         $task = new Task($this->config);
         $apiRes = $task->get('people');
         $token = $apiRes['token'];
-        dd($apiRes);
 
         $gpt = new GPT35turbo($this->config);
         $name = $gpt->prompt(
@@ -423,13 +422,11 @@ class TaskController extends Controller
                 lastname: Kowalski
             } 
             \n ### \n
-            PS: Zdrobnienia zmieniaj na pełne imię np: Tomek => Tomasz, Krysia => Krystyna    
+            PS: Zdrobnienia zmieniaj na pełne imię np: Tomek => Tomasz, Krysia =>     
             ",
             $apiRes['task']['question']
         );
         $name = json_decode($name); 
-
-        dd($name);
         
         $customRequest = new CustomRequest($apiRes['task']['data']);
         $respones = $customRequest->get(null);
@@ -441,9 +438,7 @@ class TaskController extends Controller
             }
         }
 
-        dd($data);
         $gptAns = $gpt->prompt("Mając dane: \n" .json_encode($data). "\n odpowiedz na pytanie", $apiRes['task']['question']);
-        dd($gptAns);
 
         $answer = new Answer();
         $ansRes = $answer->answer($token, $gptAns);
@@ -451,4 +446,75 @@ class TaskController extends Controller
         $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
         $this->view->main($param);
     }
+
+
+     //3L05
+     public function knowledge()
+     {
+         //Wykonaj zadanie API o nazwie ‘knowledge’. Automat zada Ci losowe pytanie na temat kursu walut, populacji wybranego kraju lub wiedzy ogólnej. Twoim zadaniem jest wybór odpowiedniego narzędzia do udzielenia odpowiedzi (API z wiedzą lub skorzystanie z wiedzy modelu). W treści zadania uzyskanego przez API, zawarte są dwa API, które mogą być dla Ciebie użyteczne. Jeśli zwracasz liczbę w odpowiedzi, to zadbaj, aby nie miała ona zbytecznego formatowania (✅ 1234567, ❌ 1 234 567).
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('knowledge');
+        $token = $apiRes['token'];
+
+        $gpt3 = new GPT35turbo($this->config);
+        $system = "User zada Ci losowe pytanie na temat kursu walut, populacji wybranego kraju lub wiedzy ogólnej. Twoim   zadaniem jest wybór odpowiedniego narzędzia. \n
+            ### \n
+
+            Odpowiedz jednym słowem: \n
+            cash <- jeśli temat dotyczy kursu walut \n
+            people <- jeśli temat dotyczy populacji \n
+            general <- jeśli temat dotyczy wiedzy ogólnej \n 
+            "
+        ;
+
+        $case = $gpt3->prompt($system, $apiRes['task']['question']);
+        dd($case);
+
+        $question = $apiRes['task']['question'];
+        switch(trim($case)){
+            case 'cash':
+                $sytem = "User zada ci pytanie odnoscnie jakiejś waluty twoim zadaniem jest zwrócenie kodu ISO 4217 tej waluty. Pamiętaj zawracasz tylko i wyłącznie kod!";
+                $gptAns =  $gpt3->prompt($sytem, $question);
+
+                $customRequest = new CustomRequest("http://api.nbp.pl/api/exchangerates/rates/a/$gptAns/?format=json");
+                $ans = $customRequest->get(null);
+                dd($ans);
+                $ans = $ans->rates[0]->mid;
+                dd($ans);
+
+                break;
+            case 'people':
+                $sytem = "User zada ci pytanie odnoscnie populacji w danym kraju, twoim zadaniem jest zwrócenie kodu danego kraju. \n
+                ### \n
+                np: 'podaj populację Francji' -zwracasz-> fr
+                ### \n
+                Pamiętaj zawracasz tylko i wyłącznie kod!";
+                $gptAns =  $gpt3->prompt($sytem, $question);
+                dd($gptAns);
+                $customRequest = new CustomRequest("https://restcountries.com/v3.1/alpha/$gptAns");
+                $ans = $customRequest->get(null);
+                dd($ans[0]);
+                $ans =  $ans[0]->population;
+                dd($ans);
+              
+                break;
+            case 'general':
+                $sytem = "User zada ci pytanie. Odpowiedz krótko ale tresciwie wykorzystując swoją wiedzę";
+                $ans =  $gpt3->prompt($sytem, $question);
+
+                dd($ans);
+              
+                break;
+        }
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $ans);
+
+        $param = $this->prepareData($apiRes,  $ans, $ansRes);
+        $this->view->main($param);
+
+
+        
+      }
 }

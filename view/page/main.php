@@ -39,6 +39,7 @@
                     <option value="whoami">whoami</option>
                     <option value="search">search</option>
                     <option value="people">people</option>
+                    <option value="knowledge">knowledge</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>
