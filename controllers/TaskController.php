@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\AIDevs\Answer;
 use app\AIDevs\CustomRequest;
 use app\AIDevs\Task;
+use app\CodeTools\Validator;
 use app\core\Controller;
 use app\GPT\GPT35turbo;
 use app\GPT\GPTembeddingADA;
@@ -448,7 +449,7 @@ class TaskController extends Controller
     }
 
 
-     //3L05
+     //4L01
      public function knowledge()
      {
          //Wykonaj zadanie API o nazwie ‘knowledge’. Automat zada Ci losowe pytanie na temat kursu walut, populacji wybranego kraju lub wiedzy ogólnej. Twoim zadaniem jest wybór odpowiedniego narzędzia do udzielenia odpowiedzi (API z wiedzą lub skorzystanie z wiedzy modelu). W treści zadania uzyskanego przez API, zawarte są dwa API, które mogą być dla Ciebie użyteczne. Jeśli zwracasz liczbę w odpowiedzi, to zadbaj, aby nie miała ona zbytecznego formatowania (✅ 1234567, ❌ 1 234 567).
@@ -513,8 +514,59 @@ class TaskController extends Controller
 
         $param = $this->prepareData($apiRes,  $ans, $ansRes);
         $this->view->main($param);
+    }
 
+    //4L02
+    public function tools()
+    {
+        // Rozwiąż zadanie API o nazwie ‘tools’. Celem zadania jest zdecydowanie, czy podane przez API zadanie powinno zostać dodane do listy zadań (ToDo), czy do kalendarza (jeśli ma ustaloną datę). Oba narzędzia mają lekko różniące się od siebie definicje struktury JSON-a (różnią się jednym polem). Spraw, aby Twoja aplikacja działała poprawnie na każdym zestawie danych testowych.
 
+        $task = new Task($this->config);
+        $apiRes = $task->get('tools');
+        $token = $apiRes['token'];
+        dd($apiRes);
+
+        $systemDis = "User poprosi Cię o jakąś akcję, związaną z narzędziem kalendarza (Calender) lub z listą zadań (ToDo). Twoim zadaniem jest zwrócenie nazwy narzędzia \n ### \n
+            Odpowiedz jednym słowem: \n
+            Calendar n
+            ToDo n
+            Pamiętaj narzędzie kalendarza urzyj, wtedy gdy jest określony czas w akcji.
+            Jeśli jest 'zapisz się na coś', należy przypisać to do listy zadań";
         
-      }
+        $gpt3 = new GPT35turbo($this->config);
+        $gptDist = $gpt3->prompt($systemDis, $apiRes['task']['question']);
+
+        if(trim($gptDist) == 'ToDo') {
+            $system = "User poda Ci akcję dotyczącą listy zadań. Twoim zadaniem jest zwrócenie JSON z danym zadaniem\n
+                ### np:\n
+                Przypomnij mi, że mam kupić mleko -zwracasz->
+                {tool:ToDo,desc:Kup mleko } \n
+                Pamietaj o dodaniu cudzysłowiów tak aby json był poprawny"
+            ;
+        } elseif (trim($gptDist) == 'Calendar'){
+            $system = "User poda Ci akcję dotyczącą zapisu wydarzenia do kalendarza. Twoim zadaniem jest zwrócenie JSON z danym wydarzeniem \n ### np:\n
+                Jutro mam spotkanie z Marianem -zwracasz->
+                {tool:Calendar,desc:Spotkanie z Marianem,date:2024-04-14}\n
+                Pamietaj o dodaniu cudzysłowiów tak aby json był poprawny
+                Dzisiejsza data to: 2024-04-13 (sobota)"
+            ;
+        } else {
+            dd('Error: $gptDis = ' . $gptDist);
+           exit;
+        }
+
+        $gptAns = $gpt3->prompt($system, $apiRes['task']['question']);
+        
+        // valid
+        if (!Validator::isValidJson($gptAns)) {
+            dd('Error with validation ' . $gptAns);
+        }
+        // odpowiedz jest ok tyko zoś z formatem Jsona pomieszali znowu...
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $gptAns);
+
+        $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
+        $this->view->main($param);
+
+    }
 }
