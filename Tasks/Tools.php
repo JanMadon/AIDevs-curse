@@ -44,8 +44,7 @@ class Tools
     {
         $chat = new GPTprompt($this->conf);
 
-        $sytem = "User poprosi Cię o jakąś akcję, związaną z narzedziem kalendarza (Calender) lub z listą zadań (ToDo). Twoim zadaniem jest zwrócenie nazwy nardzędzia\n
-        ### \n
+        $sytem = "User poprosi Cię o jakąś akcję, związaną z narzedziem kalendarza (Calender) lub z listą zadań (ToDo). Twoim zadaniem jest zwrócenie nazwy nardzędzia \n ### \n
         Odpowiedz jednym słowem: \n
         Calendar <- jeśli akcja dotyczy kalendarza \n
         ToDo <- jeśli akcja dotyczy listy zadań \n

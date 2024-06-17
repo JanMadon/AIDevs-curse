@@ -64,6 +64,9 @@ switch($app->request->url()) {
     case '/tools' : 
         $app->router->get('/tools', [TaskController::class, 'tools']);
         break;
+    case '/gnome' : 
+        $app->router->get('/gnome', [TaskController::class, 'gnome']);
+        break;
 }
 
 // $app->router->get('/helloapi', [TaskController::class, 'helloapi']);

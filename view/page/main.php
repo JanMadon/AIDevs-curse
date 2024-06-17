@@ -41,6 +41,7 @@
                     <option value="people">people</option>
                     <option value="knowledge">knowledge</option>
                     <option value="tools">tools</option>
+                    <option value="gnome">gnome</option>
                 </select>
 
                 <button type="submit" class="btn btn-primary ">Primary</button>

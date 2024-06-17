@@ -14,7 +14,7 @@ class GPT4vision
         $this->conf = $conf;
     }
 
-    function message($user, $url)
+    function prompt($user, $url)
     {
         $payload = [
             'model' => 'gpt-4-turbo',
@@ -44,7 +44,7 @@ class GPT4vision
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Content-Length: ' . strlen($payload),
-            'Authorization: Bearer ' . $this->conf['openAi-key']
+            'Authorization: Bearer ' . $this->conf['API_KEY_OPENAI']
         ]);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 

@@ -8,6 +8,7 @@ use app\AIDevs\Task;
 use app\CodeTools\Validator;
 use app\core\Controller;
 use app\GPT\GPT35turbo;
+use app\GPT\GPT4vision;
 use app\GPT\GPTembeddingADA;
 use app\GPT\GPTmoderation;
 use app\GPT\GPTwhisper;
@@ -427,19 +428,19 @@ class TaskController extends Controller
             ",
             $apiRes['task']['question']
         );
-        $name = json_decode($name); 
-        
+        $name = json_decode($name);
+
         $customRequest = new CustomRequest($apiRes['task']['data']);
         $respones = $customRequest->get(null);
-        
+
         $data = [];
-        foreach($respones as $person){
-            if($person->imie === $name->firstname && $person->nazwisko === $name->lastname) {
+        foreach ($respones as $person) {
+            if ($person->imie === $name->firstname && $person->nazwisko === $name->lastname) {
                 $data[] = $person;
             }
         }
 
-        $gptAns = $gpt->prompt("Mając dane: \n" .json_encode($data). "\n odpowiedz na pytanie", $apiRes['task']['question']);
+        $gptAns = $gpt->prompt("Mając dane: \n" . json_encode($data) . "\n odpowiedz na pytanie", $apiRes['task']['question']);
 
         $answer = new Answer();
         $ansRes = $answer->answer($token, $gptAns);
@@ -449,10 +450,10 @@ class TaskController extends Controller
     }
 
 
-     //4L01
-     public function knowledge()
-     {
-         //Wykonaj zadanie API o nazwie ‘knowledge’. Automat zada Ci losowe pytanie na temat kursu walut, populacji wybranego kraju lub wiedzy ogólnej. Twoim zadaniem jest wybór odpowiedniego narzędzia do udzielenia odpowiedzi (API z wiedzą lub skorzystanie z wiedzy modelu). W treści zadania uzyskanego przez API, zawarte są dwa API, które mogą być dla Ciebie użyteczne. Jeśli zwracasz liczbę w odpowiedzi, to zadbaj, aby nie miała ona zbytecznego formatowania (✅ 1234567, ❌ 1 234 567).
+    //4L01
+    public function knowledge()
+    {
+        //Wykonaj zadanie API o nazwie ‘knowledge’. Automat zada Ci losowe pytanie na temat kursu walut, populacji wybranego kraju lub wiedzy ogólnej. Twoim zadaniem jest wybór odpowiedniego narzędzia do udzielenia odpowiedzi (API z wiedzą lub skorzystanie z wiedzy modelu). W treści zadania uzyskanego przez API, zawarte są dwa API, które mogą być dla Ciebie użyteczne. Jeśli zwracasz liczbę w odpowiedzi, to zadbaj, aby nie miała ona zbytecznego formatowania (✅ 1234567, ❌ 1 234 567).
 
         $task = new Task($this->config);
         $apiRes = $task->get('knowledge');
@@ -466,14 +467,13 @@ class TaskController extends Controller
             cash <- jeśli temat dotyczy kursu walut \n
             people <- jeśli temat dotyczy populacji \n
             general <- jeśli temat dotyczy wiedzy ogólnej \n 
-            "
-        ;
+            ";
 
         $case = $gpt3->prompt($system, $apiRes['task']['question']);
         dd($case);
 
         $question = $apiRes['task']['question'];
-        switch(trim($case)){
+        switch (trim($case)) {
             case 'cash':
                 $sytem = "User zada ci pytanie odnoscnie jakiejś waluty twoim zadaniem jest zwrócenie kodu ISO 4217 tej waluty. Pamiętaj zawracasz tylko i wyłącznie kod!";
                 $gptAns =  $gpt3->prompt($sytem, $question);
@@ -498,14 +498,14 @@ class TaskController extends Controller
                 dd($ans[0]);
                 $ans =  $ans[0]->population;
                 dd($ans);
-              
+
                 break;
             case 'general':
                 $sytem = "User zada ci pytanie. Odpowiedz krótko ale tresciwie wykorzystując swoją wiedzę";
                 $ans =  $gpt3->prompt($sytem, $question);
 
                 dd($ans);
-              
+
                 break;
         }
 
@@ -532,31 +532,29 @@ class TaskController extends Controller
             ToDo n
             Pamiętaj narzędzie kalendarza urzyj, wtedy gdy jest określony czas w akcji.
             Jeśli jest 'zapisz się na coś', należy przypisać to do listy zadań";
-        
+
         $gpt3 = new GPT35turbo($this->config);
         $gptDist = $gpt3->prompt($systemDis, $apiRes['task']['question']);
 
-        if(trim($gptDist) == 'ToDo') {
+        if (trim($gptDist) == 'ToDo') {
             $system = "User poda Ci akcję dotyczącą listy zadań. Twoim zadaniem jest zwrócenie JSON z danym zadaniem\n
                 ### np:\n
                 Przypomnij mi, że mam kupić mleko -zwracasz->
                 {tool:ToDo,desc:Kup mleko } \n
-                Pamietaj o dodaniu cudzysłowiów tak aby json był poprawny"
-            ;
-        } elseif (trim($gptDist) == 'Calendar'){
+                Pamietaj o dodaniu cudzysłowiów tak aby json był poprawny";
+        } elseif (trim($gptDist) == 'Calendar') {
             $system = "User poda Ci akcję dotyczącą zapisu wydarzenia do kalendarza. Twoim zadaniem jest zwrócenie JSON z danym wydarzeniem \n ### np:\n
                 Jutro mam spotkanie z Marianem -zwracasz->
                 {tool:Calendar,desc:Spotkanie z Marianem,date:2024-04-14}\n
                 Pamietaj o dodaniu cudzysłowiów tak aby json był poprawny
-                Dzisiejsza data to: 2024-04-13 (sobota)"
-            ;
+                Dzisiejsza data to: 2024-04-13 (sobota)";
         } else {
             dd('Error: $gptDis = ' . $gptDist);
-           exit;
+            exit;
         }
 
         $gptAns = $gpt3->prompt($system, $apiRes['task']['question']);
-        
+
         // valid
         if (!Validator::isValidJson($gptAns)) {
             dd('Error with validation ' . $gptAns);
@@ -567,6 +565,23 @@ class TaskController extends Controller
 
         $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
         $this->view->main($param);
+    }
 
+    public function gnome()
+    {
+        //Rozwiąż zadanie API o nazwie ‘gnome’. Backend będzie zwracał Ci linka do obrazków przedstawiających gnomy/skrzaty. Twoim zadaniem jest przygotowanie systemu, który będzie rozpoznawał, jakiego koloru czapkę ma wygenerowana postać. Uwaga! Adres URL zmienia się po każdym pobraniu zadania i nie wszystkie podawane obrazki zawierają zdjęcie postaci w czapce. Jeśli natkniesz się na coś, co nie jest skrzatem/gnomem, odpowiedz “error”. Do tego zadania musisz użyć GPT-4V (Vision).
+
+        $task = new Task($this->config);
+        $apiRes = $task->get('gnome');
+        $token = $apiRes['token'];
+
+        $gpt4Vis = new GPT4vision($this->config);
+        $gptAns = $gpt4Vis->prompt($apiRes['task']['msg'], $apiRes['task']['url']);
+
+        $answer = new Answer();
+        $ansRes = $answer->answer($token, $gptAns);
+
+        $param = $this->prepareData($apiRes,  $gptAns, $ansRes);
+        $this->view->main($param);
     }
 }
