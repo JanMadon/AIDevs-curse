@@ -567,6 +567,7 @@ class TaskController extends Controller
         $this->view->main($param);
     }
 
+    //4L03
     public function gnome()
     {
         //Rozwiąż zadanie API o nazwie ‘gnome’. Backend będzie zwracał Ci linka do obrazków przedstawiających gnomy/skrzaty. Twoim zadaniem jest przygotowanie systemu, który będzie rozpoznawał, jakiego koloru czapkę ma wygenerowana postać. Uwaga! Adres URL zmienia się po każdym pobraniu zadania i nie wszystkie podawane obrazki zawierają zdjęcie postaci w czapce. Jeśli natkniesz się na coś, co nie jest skrzatem/gnomem, odpowiedz “error”. Do tego zadania musisz użyć GPT-4V (Vision).
@@ -576,6 +577,7 @@ class TaskController extends Controller
         $token = $apiRes['token'];
 
         $gpt4Vis = new GPT4vision($this->config);
+        //todo trochę słaby ten prompt w ['task']['msg'] -> nie wywala errora podczs braku gnoma na obrazku..
         $gptAns = $gpt4Vis->prompt($apiRes['task']['msg'], $apiRes['task']['url']);
 
         $answer = new Answer();
